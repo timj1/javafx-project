@@ -1,6 +1,8 @@
 package com.company;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -19,7 +21,10 @@ public class App extends Application {
         TextArea textA = new TextArea();
         bPane.setTop(clearB);
         bPane.setCenter(textA);
-        
+
+        EventHandler<ActionEvent> eventHandler = actionEvent -> textA.clear();
+        clearB.setOnAction(eventHandler);
+
         //Button world = new Button("World");
         //Group group = new Group(new Button("Hello"), world);
         Scene scene = new Scene(bPane, 640, 480);
