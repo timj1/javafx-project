@@ -25,6 +25,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
 
+        TextArea textA = new TextArea();
         MenuBar menuBar = new MenuBar();
 
         Menu file = new Menu("File");
@@ -57,14 +58,23 @@ public class App extends Application {
         menuBar.getMenus().add(edit);
         edit.getItems().addAll(cutItem, copyItem, pasteItem);
 
-        cutItem.setAccelerator(new KeyCodeCombination(KeyCode.X, KeyCombination.SHORTCUT_DOWN));
-        cutItem.setOnAction(actionEvent -> System.out.println("Ctrl-X"));
+        //cutItem.setAccelerator(new KeyCodeCombination(KeyCode.X, KeyCombination.SHORTCUT_DOWN));
+        cutItem.setOnAction(actionEvent -> {
+            textA.cut();
+            System.out.println("Ctrl-X");
+        });
 
-        copyItem.setAccelerator(new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN));
-        copyItem.setOnAction(actionEvent -> System.out.println("Ctrl-C"));
+        //copyItem.setAccelerator(new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN));
+        copyItem.setOnAction(actionEvent -> {
+            textA.copy();
+            System.out.println("Ctrl-C");
+        });
 
-        pasteItem.setAccelerator(new KeyCodeCombination(KeyCode.V, KeyCombination.SHORTCUT_DOWN));
-        pasteItem.setOnAction(actionEvent -> System.out.println("Ctrl-V"));
+        //pasteItem.setAccelerator(new KeyCodeCombination(KeyCode.V, KeyCombination.SHORTCUT_DOWN));
+        pasteItem.setOnAction(actionEvent -> {
+            textA.paste();
+            System.out.println("Ctrl-V");
+        });
 
         Menu run = new Menu("Run");
         MenuItem compRunItem = new MenuItem("Compile and Run");
@@ -85,7 +95,6 @@ public class App extends Application {
 
         BorderPane bPane = new BorderPane();
         Button clearB = new Button("clear");
-        TextArea textA = new TextArea();
         bPane.setTop(menuBar);
         bPane.setCenter(textA);
 
