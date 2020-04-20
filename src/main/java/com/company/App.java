@@ -6,6 +6,9 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -29,6 +32,15 @@ public class App extends Application {
         menuBar.getMenus().add(file);
         file.getItems().addAll(newItem, openItem, saveItem, exitItem);
 
+        newItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
+        newItem.setOnAction(actionEvent -> System.out.println("Ctrl-N"));
+
+        openItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
+        openItem.setOnAction(actionEvent -> System.out.println("Ctrl-O"));
+
+        saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
+        saveItem.setOnAction(actionEvent -> System.out.println("Ctrl-S"));
+
         exitItem.setOnAction(actionEvent -> System.exit(0));
 
         Menu edit = new Menu("Edit");
@@ -37,6 +49,15 @@ public class App extends Application {
         MenuItem pasteItem = new MenuItem("Paste");
         menuBar.getMenus().add(edit);
         edit.getItems().addAll(cutItem, copyItem, pasteItem);
+
+        cutItem.setAccelerator(new KeyCodeCombination(KeyCode.X, KeyCombination.SHORTCUT_DOWN));
+        cutItem.setOnAction(actionEvent -> System.out.println("Ctrl-X"));
+
+        copyItem.setAccelerator(new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN));
+        copyItem.setOnAction(actionEvent -> System.out.println("Ctrl-C"));
+
+        pasteItem.setAccelerator(new KeyCodeCombination(KeyCode.V, KeyCombination.SHORTCUT_DOWN));
+        pasteItem.setOnAction(actionEvent -> System.out.println("Ctrl-V"));
 
         Menu run = new Menu("Run");
         MenuItem compRunItem = new MenuItem("Compile and Run");
