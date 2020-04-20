@@ -13,6 +13,10 @@ import javafx.stage.StageStyle;
 
 public class App extends Application {
 
+    public App() {
+        System.out.println("constructor");
+    }
+
     @Override
     public void start(Stage stage) {
 
