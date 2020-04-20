@@ -15,6 +15,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.File;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class App extends Application {
 
@@ -24,15 +26,38 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
+        // Locale locale = Locale.getDefault();
+        Locale locale = new Locale("fi", "FI");
+        ResourceBundle labels = ResourceBundle.getBundle("ui", locale);
+        String title = labels.getString("title");
+        String fileString = labels.getString("fileString");
+        String newItemString = labels.getString("newItemString");
+        String openItemString = labels.getString("openItemString");
+        String saveItemString = labels.getString("saveItemString");
+        String exitItemString = labels.getString("exitItemString");
+
+        String editString = labels.getString("editString");
+        String cutItemString = labels.getString("cutItemString");
+        String copyItemString = labels.getString("copyItemString");
+        String pasteItemString = labels.getString("pasteItemString");
+
+        String runString = labels.getString("runString");
+        String compRunItemString = labels.getString("compRunItemString");
+
+        String aboutString = labels.getString("aboutString");
+        String aboutItemString = labels.getString("aboutItemString");
+
+        String alertTitle = labels.getString("alertTitle");
+        String alertText = labels.getString("alertText");
 
         TextArea textA = new TextArea();
         MenuBar menuBar = new MenuBar();
 
-        Menu file = new Menu("File");
-        MenuItem newItem = new MenuItem("New");
-        MenuItem openItem = new MenuItem("Open");
-        MenuItem saveItem = new MenuItem("Save");
-        MenuItem exitItem = new MenuItem("Exit");
+        Menu file = new Menu(fileString);
+        MenuItem newItem = new MenuItem(newItemString);
+        MenuItem openItem = new MenuItem(openItemString);
+        MenuItem saveItem = new MenuItem(saveItemString);
+        MenuItem exitItem = new MenuItem(exitItemString);
         menuBar.getMenus().add(file);
         file.getItems().addAll(newItem, openItem, saveItem, exitItem);
 
@@ -51,10 +76,10 @@ public class App extends Application {
 
         exitItem.setOnAction(actionEvent -> System.exit(0));
 
-        Menu edit = new Menu("Edit");
-        MenuItem cutItem = new MenuItem("Cut");
-        MenuItem copyItem = new MenuItem("Copy");
-        MenuItem pasteItem = new MenuItem("Paste");
+        Menu edit = new Menu(editString);
+        MenuItem cutItem = new MenuItem(cutItemString);
+        MenuItem copyItem = new MenuItem(copyItemString);
+        MenuItem pasteItem = new MenuItem(pasteItemString);
         menuBar.getMenus().add(edit);
         edit.getItems().addAll(cutItem, copyItem, pasteItem);
 
@@ -76,20 +101,20 @@ public class App extends Application {
             System.out.println("Ctrl-V");
         });
 
-        Menu run = new Menu("Run");
-        MenuItem compRunItem = new MenuItem("Compile and Run");
+        Menu run = new Menu(runString);
+        MenuItem compRunItem = new MenuItem(compRunItemString);
         menuBar.getMenus().add(run);
         run.getItems().add(compRunItem);
 
-        Menu about = new Menu("About");
-        MenuItem aboutItem = new MenuItem("About App");
+        Menu about = new Menu(aboutString);
+        MenuItem aboutItem = new MenuItem(aboutItemString);
         menuBar.getMenus().add(about);
         about.getItems().add(aboutItem);
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Information");
+        alert.setTitle(alertTitle);
         alert.setHeaderText(null);
-        alert.setContentText("About this app...");
+        alert.setContentText(alertText);
 
         aboutItem.setOnAction(actionEvent -> alert.showAndWait());
 
@@ -109,7 +134,7 @@ public class App extends Application {
         //stage.setWidth(640);
         //stage.setHeight(480);
         stage.centerOnScreen();
-        stage.setTitle("JavaFX");
+        stage.setTitle(title);
         stage.setScene(scene);
         stage.show();
 
