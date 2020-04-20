@@ -69,6 +69,13 @@ public class App extends Application {
         menuBar.getMenus().add(about);
         about.getItems().add(aboutItem);
 
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information");
+        alert.setHeaderText(null);
+        alert.setContentText("About this app...");
+
+        aboutItem.setOnAction(actionEvent -> alert.showAndWait());
+
         BorderPane bPane = new BorderPane();
         Button clearB = new Button("clear");
         TextArea textA = new TextArea();
