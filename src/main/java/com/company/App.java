@@ -51,6 +51,13 @@ public class App extends Application {
         String alertText = labels.getString("alertText");
 
         TextArea textA = new TextArea();
+        textA.setOnKeyPressed(keyEvent -> {
+            if(keyEvent.getCode() == KeyCode.TAB) {
+                int index = textA.getCaretPosition();
+                textA.replaceText(index-1, index, "    ");
+            }
+        });
+
         MenuBar menuBar = new MenuBar();
 
         Menu file = new Menu(fileString);
