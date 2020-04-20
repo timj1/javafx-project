@@ -10,8 +10,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+
+import java.io.File;
 
 public class App extends Application {
 
@@ -35,11 +38,15 @@ public class App extends Application {
         newItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
         newItem.setOnAction(actionEvent -> System.out.println("Ctrl-N"));
 
+        FileChooser fileChooser = new FileChooser();
         openItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
-        openItem.setOnAction(actionEvent -> System.out.println("Ctrl-O"));
+        openItem.setOnAction(actionEvent -> fileChooser.showOpenDialog(stage));
 
         saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
-        saveItem.setOnAction(actionEvent -> System.out.println("Ctrl-S"));
+        saveItem.setOnAction(actionEvent -> {
+            File selectedFile = fileChooser.showOpenDialog(stage);
+            System.out.println("Ctrl-S");
+        });
 
         exitItem.setOnAction(actionEvent -> System.exit(0));
 
