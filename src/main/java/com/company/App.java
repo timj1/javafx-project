@@ -10,11 +10,15 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -29,6 +33,7 @@ public class App extends Application {
         // Locale locale = Locale.getDefault();
         Locale locale = new Locale("fi", "FI");
         ResourceBundle labels = ResourceBundle.getBundle("ui", locale);
+
         String title = labels.getString("title");
         String fileString = labels.getString("fileString");
         String newItemString = labels.getString("newItemString");
@@ -50,12 +55,45 @@ public class App extends Application {
         String alertTitle = labels.getString("alertTitle");
         String alertText = labels.getString("alertText");
 
+        String fontsString = labels.getString("fontsString");
+
+
+
         TextArea textA = new TextArea();
+        textA.setStyle("-fx-text-fill: blue; -fx-font-family: Arial; -fx-font-size: 12 px;");
         textA.setOnKeyPressed(keyEvent -> {
             if(keyEvent.getCode() == KeyCode.TAB) {
                 int index = textA.getCaretPosition();
                 textA.replaceText(index-1, index, "    ");
             }
+        });
+
+        ColorPicker colorPicker = new ColorPicker();
+        colorPicker.setOnAction(actionEvent -> {
+            Color value = colorPicker.getValue();
+            textA.setStyle("-fx-text-fill:" + value.toString().replaceFirst("0x", "#")  + ";");
+        });
+
+        LinkedList<String> list = new LinkedList<>(Font.getFontNames());
+        System.out.println(list);
+        System.out.println(textA.getStyle());
+
+        MenuBar menuFont = new MenuBar();
+        Menu fonts = new Menu(fontsString);
+        MenuItem arialFont = new MenuItem("Arial");
+        MenuItem serifFont = new MenuItem("Times");
+        MenuItem cursiveFont = new MenuItem("Cursive");
+        menuFont.getMenus().add(fonts);
+        fonts.getItems().addAll(arialFont, serifFont, cursiveFont);
+
+        arialFont.setOnAction(actionEvent -> {
+            textA.setStyle("-fx-font-family: sans-serif;");
+        });
+        serifFont.setOnAction(actionEvent -> {
+            textA.setStyle("-fx-font-family: serif;");
+        });
+        cursiveFont.setOnAction(actionEvent -> {
+            textA.setStyle("-fx-font-family: cursive;");
         });
 
         MenuBar menuBar = new MenuBar();
@@ -126,8 +164,9 @@ public class App extends Application {
         aboutItem.setOnAction(actionEvent -> alert.showAndWait());
 
         BorderPane bPane = new BorderPane();
+        HBox hBox = new HBox(menuBar, colorPicker, menuFont);
         Button clearB = new Button("clear");
-        bPane.setTop(menuBar);
+        bPane.setTop(hBox);
         bPane.setCenter(textA);
 
         EventHandler<ActionEvent> eventHandler = actionEvent -> textA.clear();
