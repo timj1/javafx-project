@@ -18,6 +18,7 @@ import javafx.stage.StageStyle;
 
 import java.io.File;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -56,8 +57,15 @@ public class App extends Application {
 
         String fontsString = labels.getString("fontsString");
 
+
+        String [] textCSS = new String[]{"-fx-text-fill:", "blue;"};
+        String [] fontCSS = new String[]{"-fx-font-family:", "Arial;"};
+        String [] sizeCSS = new String[]{"-fx-font-size:", "12 px;"};
+
+        System.out.println(textCSS[0]+textCSS[1]);
+
         TextArea textA = new TextArea();
-        textA.setStyle("-fx-text-fill: blue; -fx-font-family: Arial; -fx-font-size: 12 px;");
+        textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
         textA.setOnKeyPressed(keyEvent -> {
             if(keyEvent.getCode() == KeyCode.TAB) {
                 int index = textA.getCaretPosition();
@@ -68,12 +76,15 @@ public class App extends Application {
         ColorPicker colorPicker = new ColorPicker();
         colorPicker.setOnAction(actionEvent -> {
             Color value = colorPicker.getValue();
-            textA.setStyle("-fx-text-fill:" + value.toString().replaceFirst("0x", "#")  + ";");
+            textCSS[1] = value.toString().replaceFirst("0x", "#")+";";
+            textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
         });
 
         LinkedList<String> list = new LinkedList<>(Font.getFontNames());
         System.out.println(list);
         System.out.println(textA.getStyle());
+        System.out.println(textA.getFont());
+        System.out.println(textA.getText());
 
         MenuBar menuFont = new MenuBar();
         Menu fonts = new Menu(fontsString);
@@ -84,13 +95,16 @@ public class App extends Application {
         fonts.getItems().addAll(arialFont, serifFont, cursiveFont);
 
         arialFont.setOnAction(actionEvent -> {
-            textA.setStyle("-fx-font-family: sans-serif;");
+            fontCSS[1] = "sans-serif;";
+            textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
         });
         serifFont.setOnAction(actionEvent -> {
-            textA.setStyle("-fx-font-family: serif;");
+            fontCSS[1] = "serif;";
+            textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
         });
         cursiveFont.setOnAction(actionEvent -> {
-            textA.setStyle("-fx-font-family: cursive;");
+            fontCSS[1] = "cursive;";
+            textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
         });
 
         MenuBar menuBar = new MenuBar();
