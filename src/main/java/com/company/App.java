@@ -1,5 +1,6 @@
 package com.company;
 
+import com.company.util.FileHandler;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,7 +19,6 @@ import javafx.stage.StageStyle;
 
 import java.io.File;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -122,15 +122,30 @@ public class App extends Application {
 
         FileChooser fileChooser = new FileChooser();
         openItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
-        openItem.setOnAction(actionEvent -> fileChooser.showOpenDialog(stage));
+        openItem.setOnAction(actionEvent -> {
+            File openFile = fileChooser.showOpenDialog(stage);
+            FileHandler fileHandler = new FileHandler();
+            fileHandler.setFilePath(openFile.getPath());
+            String content = fileHandler.open();
+            textA.setText(content);
+
+        });
 
         saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
         saveItem.setOnAction(actionEvent -> {
-            File selectedFile = fileChooser.showSaveDialog(stage);
-            System.out.println("Ctrl-S");
+            File saveFile = fileChooser.showSaveDialog(stage);
+            FileHandler saveHandler = new FileHandler(saveFile.getPath());
+            String saveContent = textA.getText();
+            saveHandler.save(saveContent);
+
         });
 
         exitItem.setOnAction(actionEvent -> System.exit(0));
+
+
+        //FileHandler fh = new FileHandler("C:/Users/Jee/Desktop/texti.txt");
+        //String content = FileHandler.open();
+        //fh.save("some content");
 
         Menu edit = new Menu(editString);
         MenuItem cutItem = new MenuItem(cutItemString);
