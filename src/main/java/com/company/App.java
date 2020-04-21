@@ -11,6 +11,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
@@ -182,9 +183,11 @@ public class App extends Application {
         aboutItem.setOnAction(actionEvent -> alert.showAndWait());
 
         BorderPane bPane = new BorderPane();
-        HBox hBox = new HBox(menuBar, colorPicker, menuFont);
+
+        HBox hBox = new HBox(colorPicker, menuFont);
+        VBox vBox = new VBox(menuBar, hBox);
         Button clearB = new Button("clear");
-        bPane.setTop(hBox);
+        bPane.setTop(vBox);
         bPane.setCenter(textA);
 
         EventHandler<ActionEvent> eventHandler = actionEvent -> textA.clear();
