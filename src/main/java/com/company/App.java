@@ -13,13 +13,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.File;
-import java.util.LinkedList;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -31,37 +29,41 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
+        // Localization ------------
         // Locale locale = Locale.getDefault();
         Locale locale = new Locale("fi", "FI");
         ResourceBundle labels = ResourceBundle.getBundle("ui", locale);
-
+        // Application title ------
         String title = labels.getString("title");
+        //File menu names ------
         String fileString = labels.getString("fileString");
         String newItemString = labels.getString("newItemString");
         String openItemString = labels.getString("openItemString");
         String saveItemString = labels.getString("saveItemString");
         String exitItemString = labels.getString("exitItemString");
-
+        // Edit menu names ------
         String editString = labels.getString("editString");
         String cutItemString = labels.getString("cutItemString");
         String copyItemString = labels.getString("copyItemString");
         String pasteItemString = labels.getString("pasteItemString");
-
+        // Run menu names ------
         String runString = labels.getString("runString");
         String compRunItemString = labels.getString("compRunItemString");
-
+        // About menu names ------
         String aboutString = labels.getString("aboutString");
         String aboutItemString = labels.getString("aboutItemString");
-
+        // Alert names ------
         String alertTitle = labels.getString("alertTitle");
         String alertText = labels.getString("alertText");
-
+        // Fonts name ------
         String fontsString = labels.getString("fontsString");
 
+        // String[] for setStyle ------------
         String [] textCSS = new String[]{"-fx-text-fill:", "blue;"};
         String [] fontCSS = new String[]{"-fx-font-family:", "Arial;"};
         String [] sizeCSS = new String[]{"-fx-font-size:", "12 px;"};
 
+        // TextArea ------------
         TextArea textA = new TextArea();
         textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
         textA.setOnKeyPressed(keyEvent -> {
@@ -71,6 +73,12 @@ public class App extends Application {
             }
         });
 
+        // Clear button ------------
+        //EventHandler<ActionEvent> eventHandler = actionEvent -> textA.clear();
+        Button clearB = new Button("clear");
+        clearB.setOnAction(actionEvent -> textA.clear());
+
+        // ColorPicker ------------
         ColorPicker colorPicker = new ColorPicker();
         colorPicker.setOnAction(actionEvent -> {
             Color value = colorPicker.getValue();
@@ -78,12 +86,7 @@ public class App extends Application {
             textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
         });
 
-        LinkedList<String> list = new LinkedList<>(Font.getFontNames());
-        System.out.println(list);
-        System.out.println(textA.getStyle());
-        System.out.println(textA.getFont());
-        System.out.println(textA.getText());
-
+        // Font size TextField ------------
         TextField fontSizeField = new TextField();
         fontSizeField.setPrefColumnCount(2);
         fontSizeField.setPromptText(sizeCSS[1].replaceFirst("px;", ""));
@@ -102,6 +105,7 @@ public class App extends Application {
             }
         });
 
+        // Font MenuButton ------------
         MenuItem arialFont = new MenuItem("Arial");
         MenuItem serifFont = new MenuItem("Times");
         MenuItem cursiveFont = new MenuItem("Cursive");
@@ -125,8 +129,9 @@ public class App extends Application {
             textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
         });
 
+        // MenuBar ------------------
         MenuBar menuBar = new MenuBar();
-
+        // File menu ------------
         Menu file = new Menu(fileString);
         MenuItem newItem = new MenuItem(newItemString);
         MenuItem openItem = new MenuItem(openItemString);
@@ -138,6 +143,7 @@ public class App extends Application {
         newItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
         newItem.setOnAction(actionEvent -> System.out.println("Ctrl-N"));
 
+        // Open file ------
         FileChooser fileChooser = new FileChooser();
         openItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
         openItem.setOnAction(actionEvent -> {
@@ -146,20 +152,18 @@ public class App extends Application {
             fileHandler.setFilePath(openFile.getPath());
             String content = fileHandler.open();
             textA.setText(content);
-
         });
-
+        // Save file ------
         saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
         saveItem.setOnAction(actionEvent -> {
-            File saveFile = fileChooser.showSaveDialog(stage);
-            FileHandler saveHandler = new FileHandler(saveFile.getPath());
+            FileHandler saveHandler = new FileHandler(new FileChooser().showSaveDialog(stage).getPath());
             String saveContent = textA.getText();
             saveHandler.save(saveContent);
-
         });
-
+        // Exit action ------
         exitItem.setOnAction(actionEvent -> System.exit(0));
 
+        // Edit menu ------------
         Menu edit = new Menu(editString);
         MenuItem cutItem = new MenuItem(cutItemString);
         MenuItem copyItem = new MenuItem(copyItemString);
@@ -167,34 +171,33 @@ public class App extends Application {
         menuBar.getMenus().add(edit);
         edit.getItems().addAll(cutItem, copyItem, pasteItem);
 
-        //cutItem.setAccelerator(new KeyCodeCombination(KeyCode.X, KeyCombination.SHORTCUT_DOWN));
+        // Cut, copy and paste actions ------
         cutItem.setOnAction(actionEvent -> {
             textA.cut();
             System.out.println("Ctrl-X");
         });
-
-        //copyItem.setAccelerator(new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN));
         copyItem.setOnAction(actionEvent -> {
             textA.copy();
             System.out.println("Ctrl-C");
         });
-
-        //pasteItem.setAccelerator(new KeyCodeCombination(KeyCode.V, KeyCombination.SHORTCUT_DOWN));
         pasteItem.setOnAction(actionEvent -> {
             textA.paste();
             System.out.println("Ctrl-V");
         });
 
+        // Run menu ------------
         Menu run = new Menu(runString);
         MenuItem compRunItem = new MenuItem(compRunItemString);
         menuBar.getMenus().add(run);
         run.getItems().add(compRunItem);
 
+        // About menu ------------
         Menu about = new Menu(aboutString);
         MenuItem aboutItem = new MenuItem(aboutItemString);
         menuBar.getMenus().add(about);
         about.getItems().add(aboutItem);
 
+        // Alert information ------------
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(alertTitle);
         alert.setHeaderText(null);
@@ -202,22 +205,17 @@ public class App extends Application {
 
         aboutItem.setOnAction(actionEvent -> alert.showAndWait());
 
+        // Layout ------------
         BorderPane bPane = new BorderPane();
-
-        HBox hBox = new HBox(colorPicker, menuFont, fontSizeField);
+        HBox hBox = new HBox(clearB, colorPicker, menuFont, fontSizeField);
         VBox vBox = new VBox(menuBar, hBox);
-        Button clearB = new Button("clear");
         bPane.setTop(vBox);
         bPane.setCenter(textA);
 
-        EventHandler<ActionEvent> eventHandler = actionEvent -> textA.clear();
-        clearB.setOnAction(eventHandler);
-
+        // Scene ------------
         Scene scene = new Scene(bPane, 640, 480);
-
+        // Stage ------------
         stage.initStyle(StageStyle.DECORATED);
-        //stage.setWidth(640);
-        //stage.setHeight(480);
         stage.centerOnScreen();
         stage.setTitle(title);
         stage.setScene(scene);
