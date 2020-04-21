@@ -57,12 +57,9 @@ public class App extends Application {
 
         String fontsString = labels.getString("fontsString");
 
-
         String [] textCSS = new String[]{"-fx-text-fill:", "blue;"};
         String [] fontCSS = new String[]{"-fx-font-family:", "Arial;"};
         String [] sizeCSS = new String[]{"-fx-font-size:", "12 px;"};
-
-        System.out.println(textCSS[0]+textCSS[1]);
 
         TextArea textA = new TextArea();
         textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
@@ -141,11 +138,6 @@ public class App extends Application {
         });
 
         exitItem.setOnAction(actionEvent -> System.exit(0));
-
-
-        //FileHandler fh = new FileHandler("C:/Users/Jee/Desktop/texti.txt");
-        //String content = FileHandler.open();
-        //fh.save("some content");
 
         Menu edit = new Menu(editString);
         MenuItem cutItem = new MenuItem(cutItemString);
