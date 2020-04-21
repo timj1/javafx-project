@@ -131,6 +131,7 @@ public class App extends Application {
 
         // MenuBar ------------------
         MenuBar menuBar = new MenuBar();
+
         // File menu ------------
         Menu file = new Menu(fileString);
         MenuItem newItem = new MenuItem(newItemString);
@@ -149,16 +150,24 @@ public class App extends Application {
         openItem.setOnAction(actionEvent -> {
             File openFile = fileChooser.showOpenDialog(stage);
             FileHandler fileHandler = new FileHandler();
-            fileHandler.setFilePath(openFile.getPath());
-            String content = fileHandler.open();
-            textA.setText(content);
+            try {
+                fileHandler.setFilePath(openFile.getPath());
+                String content = fileHandler.open();
+                textA.setText(content);
+            } catch (Exception e) {
+                System.out.println("Open error: " + e);
+            }
         });
         // Save file ------
         saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
         saveItem.setOnAction(actionEvent -> {
-            FileHandler saveHandler = new FileHandler(new FileChooser().showSaveDialog(stage).getPath());
-            String saveContent = textA.getText();
-            saveHandler.save(saveContent);
+            try {
+                FileHandler saveHandler = new FileHandler(new FileChooser().showSaveDialog(stage).getPath());
+                String saveContent = textA.getText();
+                saveHandler.save(saveContent);
+            } catch (Exception e) {
+                System.out.println("Close error: " + e);
+            }
         });
         // Exit action ------
         exitItem.setOnAction(actionEvent -> System.exit(0));
@@ -172,14 +181,17 @@ public class App extends Application {
         edit.getItems().addAll(cutItem, copyItem, pasteItem);
 
         // Cut, copy and paste actions ------
+        cutItem.setAccelerator(new KeyCodeCombination(KeyCode.X, KeyCombination.SHORTCUT_DOWN));
         cutItem.setOnAction(actionEvent -> {
             textA.cut();
             System.out.println("Ctrl-X");
         });
+        copyItem.setAccelerator(new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN));
         copyItem.setOnAction(actionEvent -> {
             textA.copy();
             System.out.println("Ctrl-C");
         });
+        pasteItem.setAccelerator(new KeyCodeCombination(KeyCode.V, KeyCombination.SHORTCUT_DOWN));
         pasteItem.setOnAction(actionEvent -> {
             textA.paste();
             System.out.println("Ctrl-V");
