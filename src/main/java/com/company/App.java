@@ -39,6 +39,7 @@ public class App extends Application {
         String fileString = labels.getString("fileString");
         String newItemString = labels.getString("newItemString");
         String openItemString = labels.getString("openItemString");
+        String saveAsItemString = labels.getString("saveAsItemString");
         String saveItemString = labels.getString("saveItemString");
         String exitItemString = labels.getString("exitItemString");
         // Edit menu names ------
@@ -136,37 +137,54 @@ public class App extends Application {
         Menu file = new Menu(fileString);
         MenuItem newItem = new MenuItem(newItemString);
         MenuItem openItem = new MenuItem(openItemString);
+        MenuItem saveAsItem = new MenuItem(saveAsItemString);
         MenuItem saveItem = new MenuItem(saveItemString);
         MenuItem exitItem = new MenuItem(exitItemString);
+        saveItem.setDisable(true);
         menuBar.getMenus().add(file);
-        file.getItems().addAll(newItem, openItem, saveItem, exitItem);
+        file.getItems().addAll(newItem, openItem, saveAsItem, saveItem, exitItem);
 
         newItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
         newItem.setOnAction(actionEvent -> System.out.println("Ctrl-N"));
 
+        // FileHandler for Open, save as... and save ------
+        FileHandler fileHandler = new FileHandler();
         // Open file ------
         FileChooser fileChooser = new FileChooser();
         openItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
         openItem.setOnAction(actionEvent -> {
             File openFile = fileChooser.showOpenDialog(stage);
-            FileHandler fileHandler = new FileHandler();
             try {
                 fileHandler.setFilePath(openFile.getPath());
                 String content = fileHandler.open();
                 textA.setText(content);
+
+                saveItem.setDisable(false);
             } catch (Exception e) {
                 System.out.println("Open error: " + e);
+            }
+        });
+        // Save as... file ------
+        saveAsItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHIFT_DOWN,
+                KeyCombination.SHORTCUT_DOWN));
+        saveAsItem.setOnAction(actionEvent -> {
+            try {
+                fileHandler.setFilePath(new FileChooser().showSaveDialog(stage).getPath());
+                String saveContent = textA.getText();
+                fileHandler.save(saveContent);
+
+                saveItem.setDisable(false);
+            } catch (Exception e) {
+                System.out.println("Save as... error: " + e);
             }
         });
         // Save file ------
         saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
         saveItem.setOnAction(actionEvent -> {
             try {
-                FileHandler saveHandler = new FileHandler(new FileChooser().showSaveDialog(stage).getPath());
-                String saveContent = textA.getText();
-                saveHandler.save(saveContent);
-            } catch (Exception e) {
-                System.out.println("Close error: " + e);
+                fileHandler.save(textA.getText());
+            } catch(Exception e) {
+                System.out.println("Save error: " + e);
             }
         });
         // Exit action ------
