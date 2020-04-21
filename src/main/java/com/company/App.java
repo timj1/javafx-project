@@ -84,13 +84,29 @@ public class App extends Application {
         System.out.println(textA.getFont());
         System.out.println(textA.getText());
 
-        MenuBar menuFont = new MenuBar();
-        Menu fonts = new Menu(fontsString);
+        TextField fontSizeField = new TextField();
+        fontSizeField.setPrefColumnCount(2);
+        fontSizeField.setPromptText(sizeCSS[1].replaceFirst("px;", ""));
+
+        fontSizeField.setOnAction(actionEvent -> {
+            int fontSizeInt = 0;
+            try {
+                fontSizeInt = Integer.parseInt(fontSizeField.getText());
+            } catch (Exception e) {
+                fontSizeField.clear();
+            }
+            if(fontSizeInt > 7 && fontSizeInt < 121 ) {
+                sizeCSS[1] = fontSizeField.getText() + " px;";
+                System.out.println(sizeCSS[1]);
+                textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
+            }
+        });
+
         MenuItem arialFont = new MenuItem("Arial");
         MenuItem serifFont = new MenuItem("Times");
         MenuItem cursiveFont = new MenuItem("Cursive");
-        menuFont.getMenus().add(fonts);
-        fonts.getItems().addAll(arialFont, serifFont, cursiveFont);
+        MenuItem monospaceFont = new MenuItem("Courier");
+        MenuButton menuFont = new MenuButton(fontsString, null, arialFont, serifFont, cursiveFont, monospaceFont);
 
         arialFont.setOnAction(actionEvent -> {
             fontCSS[1] = "sans-serif;";
@@ -102,6 +118,10 @@ public class App extends Application {
         });
         cursiveFont.setOnAction(actionEvent -> {
             fontCSS[1] = "cursive;";
+            textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
+        });
+        monospaceFont.setOnAction(actionEvent -> {
+            fontCSS[1] = "monospace;";
             textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
         });
 
@@ -184,7 +204,7 @@ public class App extends Application {
 
         BorderPane bPane = new BorderPane();
 
-        HBox hBox = new HBox(colorPicker, menuFont);
+        HBox hBox = new HBox(colorPicker, menuFont, fontSizeField);
         VBox vBox = new VBox(menuBar, hBox);
         Button clearB = new Button("clear");
         bPane.setTop(vBox);
