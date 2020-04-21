@@ -3,7 +3,6 @@ package com.company;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -56,8 +55,6 @@ public class App extends Application {
         String alertText = labels.getString("alertText");
 
         String fontsString = labels.getString("fontsString");
-
-
 
         TextArea textA = new TextArea();
         textA.setStyle("-fx-text-fill: blue; -fx-font-family: Arial; -fx-font-size: 12 px;");
@@ -115,7 +112,7 @@ public class App extends Application {
 
         saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
         saveItem.setOnAction(actionEvent -> {
-            File selectedFile = fileChooser.showOpenDialog(stage);
+            File selectedFile = fileChooser.showSaveDialog(stage);
             System.out.println("Ctrl-S");
         });
 
@@ -172,8 +169,6 @@ public class App extends Application {
         EventHandler<ActionEvent> eventHandler = actionEvent -> textA.clear();
         clearB.setOnAction(eventHandler);
 
-        //Button world = new Button("World");
-        //Group group = new Group(new Button("Hello"), world);
         Scene scene = new Scene(bPane, 640, 480);
 
         stage.initStyle(StageStyle.DECORATED);
@@ -184,8 +179,6 @@ public class App extends Application {
         stage.setScene(scene);
         stage.show();
 
-        //world.setTranslateX(640 - world.getWidth());
-        //world.setTranslateY(480 - world.getHeight());
     }
 
     public static void main(String args[]) {
