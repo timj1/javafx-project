@@ -3,7 +3,11 @@ package com.company;
 import com.company.util.FileHandler;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventDispatcher;
 import javafx.event.EventHandler;
+import javafx.scene.AccessibleAction;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -81,10 +85,17 @@ public class App extends Application {
 
         // ColorPicker ------------
         ColorPicker colorPicker = new ColorPicker();
+        Color colorInit = Color.web(textCSS[1].replaceFirst(";", ""));
+        colorPicker.setValue(colorInit);
+
         colorPicker.setOnAction(actionEvent -> {
             Color value = colorPicker.getValue();
             textCSS[1] = value.toString().replaceFirst("0x", "#")+";";
             textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
+            System.out.println(actionEvent.getTarget());
+            System.out.println(actionEvent.getEventType());
+            System.out.println(actionEvent.getSource());
+
         });
 
         // Font size TextField ------------
