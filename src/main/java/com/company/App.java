@@ -2,12 +2,6 @@ package com.company;
 
 import com.company.util.FileHandler;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventDispatcher;
-import javafx.event.EventHandler;
-import javafx.scene.AccessibleAction;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -62,6 +56,8 @@ public class App extends Application {
         String alertText = labels.getString("alertText");
         // Fonts name ------
         String fontsString = labels.getString("fontsString");
+        // Search field
+        String searchFieldString = labels.getString("searchFieldString");
 
         // String[] for setStyle ------------
         String [] textCSS = new String[]{"-fx-text-fill:", "blue;"};
@@ -141,9 +137,41 @@ public class App extends Application {
             textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
         });
 
+        // Search box ------------
+        HBox searchBox = new HBox();
+        // Search TextField ------
+        TextField searchField = new TextField();
+        //fontSizeField.setPrefColumnCount(2);
+        searchField.setPromptText(searchFieldString);
+        searchField.setOnAction(actionEvent -> {
+            int searchIndex = textA.getText().indexOf(searchField.getText());
+            textA.selectRange(searchIndex, searchIndex + searchField.getLength());
+        });
+        //Search buttons ------
+        ButtonBar searchButtons = new ButtonBar();
+        Button backwardButton = new Button("<");
+        Button forwardButton = new Button(">");
+        searchButtons.getButtons().addAll(backwardButton, forwardButton);
+        backwardButton.setOnAction(actionEvent -> {
+            int caretPosition = textA.getCaretPosition();
+            caretPosition = caretPosition - searchField.getLength() -1;
+            int backward = textA.getText().lastIndexOf(searchField.getText(), caretPosition);
+            if(backward > -1) {
+                textA.selectRange(backward, backward + searchField.getLength());
+            }
+        });
+        forwardButton.setOnAction(actionEvent -> {
+            int caretPosition = textA.getCaretPosition();
+            int forward = textA.getText().indexOf(searchField.getText(), caretPosition);
+            if(forward > -1) {
+                textA.selectRange(forward, forward + searchField.getLength());
+            }
+        });
+        //Search box add elements ------
+        searchBox.getChildren().addAll(searchField, backwardButton, forwardButton);
+
         // MenuBar ------------------
         MenuBar menuBar = new MenuBar();
-
         // File menu ------------
         Menu file = new Menu(fileString);
         MenuItem newItem = new MenuItem(newItemString);
@@ -248,7 +276,7 @@ public class App extends Application {
 
         // Layout ------------
         BorderPane bPane = new BorderPane();
-        HBox hBox = new HBox(clearB, colorPicker, menuFont, fontSizeField);
+        HBox hBox = new HBox(clearB, colorPicker, menuFont, fontSizeField, searchBox);
         VBox vBox = new VBox(menuBar, hBox);
         bPane.setTop(vBox);
         bPane.setCenter(textA);
