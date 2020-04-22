@@ -1,7 +1,10 @@
 package com.company;
 
 import com.company.util.FileHandler;
+import com.sun.javafx.property.adapter.PropertyDescriptor;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -186,19 +189,23 @@ public class App extends Application {
         newItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
         newItem.setOnAction(actionEvent -> System.out.println("Ctrl-N"));
 
-        // FileHandler for Open, save as... and save ------
+        // FileHandler for Open, save as... and save ------------
         FileHandler fileHandler = new FileHandler();
         // Open file ------
         FileChooser fileChooser = new FileChooser();
         openItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
         openItem.setOnAction(actionEvent -> {
+            System.out.println(fileHandler.getFilePath());
             File openFile = fileChooser.showOpenDialog(stage);
             try {
                 fileHandler.setFilePath(openFile.getPath());
-                String content = fileHandler.open();
-                textA.setText(content);
+                //String content = fileHandler.open();
+                fileHandler.open((content -> {
+                    textA.setText(content);
+                    saveItem.setDisable(false);
+                }));
 
-                saveItem.setDisable(false);
+                System.out.println(fileHandler.getFilePath());
             } catch (Exception e) {
                 System.out.println("Open error: " + e);
             }
@@ -210,9 +217,11 @@ public class App extends Application {
             try {
                 fileHandler.setFilePath(new FileChooser().showSaveDialog(stage).getPath());
                 String saveContent = textA.getText();
-                fileHandler.save(saveContent);
 
-                saveItem.setDisable(false);
+                fileHandler.save((boolean b) -> saveItem.setDisable(b), saveContent);
+                //fileHandler.save(saveContent);
+
+                //saveItem.setDisable(false);
             } catch (Exception e) {
                 System.out.println("Save as... error: " + e);
             }
@@ -221,7 +230,7 @@ public class App extends Application {
         saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
         saveItem.setOnAction(actionEvent -> {
             try {
-                fileHandler.save(textA.getText());
+                fileHandler.save((boolean b) -> saveItem.setDisable(b), textA.getText());
             } catch(Exception e) {
                 System.out.println("Save error: " + e);
             }
