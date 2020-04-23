@@ -61,6 +61,8 @@ public class App extends Application {
         String fontsString = labels.getString("fontsString");
         // Search field
         String searchFieldString = labels.getString("searchFieldString");
+        String searchAlertTitle = labels.getString("searchAlertTitle");
+        String searchAlertText = labels.getString("searchAlertText");
 
         // String[] for setStyle ------------
         String [] textCSS = new String[]{"-fx-text-fill:", "blue;"};
@@ -168,6 +170,12 @@ public class App extends Application {
             int forward = textA.getText().indexOf(searchField.getText(), caretPosition);
             if(forward > -1) {
                 textA.selectRange(forward, forward + searchField.getLength());
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle(searchAlertTitle);
+                alert.setHeaderText(null);
+                alert.setContentText(searchAlertText);
+                alert.showAndWait();
             }
         });
         //Search box add elements ------
