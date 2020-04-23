@@ -39,6 +39,8 @@ public class App extends Application {
         //File menu names ------
         String fileString = labels.getString("fileString");
         String newItemString = labels.getString("newItemString");
+        String newItemAlertTitle = labels.getString("newItemAlertTitle");
+        String newItemAlertText = labels.getString("newItemAlertText");
         String openItemString = labels.getString("openItemString");
         String saveAsItemString = labels.getString("saveAsItemString");
         String saveItemString = labels.getString("saveItemString");
@@ -194,11 +196,24 @@ public class App extends Application {
         menuBar.getMenus().add(file);
         file.getItems().addAll(newItem, openItem, saveAsItem, saveItem, exitItem);
 
-        newItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
-        newItem.setOnAction(actionEvent -> System.out.println("Ctrl-N"));
-
-        // FileHandler for Open, save as... and save ------------
+        // FileHandler for New, open, save as... and save ------------
         FileHandler fileHandler = new FileHandler();
+        // New file ------
+        newItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
+        newItem.setOnAction(actionEvent -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(newItemAlertTitle);
+            alert.setHeaderText(null);
+            alert.setContentText(newItemAlertText);
+            alert.showAndWait();
+            System.out.println(alert.getResult().getText());
+            if(alert.getResult().getText().equals("OK")) {
+                saveItem.setDisable(true);
+                fileHandler.setFilePath(null);
+                textA.clear();
+            }
+        });
+
         // Open file ------
         FileChooser fileChooser = new FileChooser();
         openItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
