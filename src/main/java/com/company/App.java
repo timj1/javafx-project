@@ -1,9 +1,8 @@
 package com.company;
 
 import com.company.util.FileHandler;
-import com.sun.javafx.property.adapter.PropertyDescriptor;
 import javafx.application.Application;
-import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -24,8 +23,26 @@ import java.util.ResourceBundle;
 
 public class App extends Application {
 
+    //TextArea
+    static TextArea textA;
+    // String[] for setStyle ------------
+    static String [] textCSS;
+    static String [] fontCSS;
+    static String [] sizeCSS;
+
     public App() {
         System.out.println("constructor");
+    }
+
+    //CSS font set method
+    public static EventHandler<ActionEvent> setFont(MenuItem font) {
+
+        EventHandler<ActionEvent> eventHandler = actionEvent -> {
+            fontCSS[1] = font.getText() + ";";
+            System.out.println(fontCSS[1]);
+            textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
+        };
+        return eventHandler;
     }
 
     @Override
@@ -67,12 +84,12 @@ public class App extends Application {
         String searchAlertText = labels.getString("searchAlertText");
 
         // String[] for setStyle ------------
-        String [] textCSS = new String[]{"-fx-text-fill:", "blue;"};
-        String [] fontCSS = new String[]{"-fx-font-family:", "Arial;"};
-        String [] sizeCSS = new String[]{"-fx-font-size:", "12 px;"};
+        textCSS = new String[]{"-fx-text-fill:", "blue;"};
+        fontCSS = new String[]{"-fx-font-family:", "Arial;"};
+        sizeCSS = new String[]{"-fx-font-size:", "12 px;"};
 
         // TextArea ------------
-        TextArea textA = new TextArea();
+        textA = new TextArea();
         textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
         textA.setOnKeyPressed(keyEvent -> {
             if(keyEvent.getCode() == KeyCode.TAB) {
@@ -121,28 +138,17 @@ public class App extends Application {
         });
 
         // Font MenuButton ------------
-        MenuItem arialFont = new MenuItem("Arial");
-        MenuItem serifFont = new MenuItem("Times");
-        MenuItem cursiveFont = new MenuItem("Cursive");
-        MenuItem monospaceFont = new MenuItem("Courier");
-        MenuButton menuFont = new MenuButton(fontsString, null, arialFont, serifFont, cursiveFont, monospaceFont);
+        MenuItem sans_serifFont = new MenuItem("Arial");
+        MenuItem serifFont = new MenuItem("serif");
+        MenuItem cursiveFont = new MenuItem("cursive");
+        MenuItem monospaceFont = new MenuItem("monospace");
+        MenuButton menuFont = new MenuButton(fontsString, null,
+                sans_serifFont, serifFont, cursiveFont, monospaceFont);
 
-        arialFont.setOnAction(actionEvent -> {
-            fontCSS[1] = "sans-serif;";
-            textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
-        });
-        serifFont.setOnAction(actionEvent -> {
-            fontCSS[1] = "serif;";
-            textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
-        });
-        cursiveFont.setOnAction(actionEvent -> {
-            fontCSS[1] = "cursive;";
-            textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
-        });
-        monospaceFont.setOnAction(actionEvent -> {
-            fontCSS[1] = "monospace;";
-            textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
-        });
+        sans_serifFont.setOnAction(setFont(sans_serifFont));
+        serifFont.setOnAction(setFont(serifFont));
+        cursiveFont.setOnAction(setFont(cursiveFont));
+        monospaceFont.setOnAction(setFont(monospaceFont));
 
         // Search box ------------
         HBox searchBox = new HBox();
