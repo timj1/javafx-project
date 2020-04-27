@@ -4,6 +4,7 @@ import com.company.util.FileHandler;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -97,6 +98,14 @@ public class App extends Application {
                 textA.replaceText(index-1, index, "    ");
             }
         });
+
+        // TextArea Output ------------
+        TextArea textOutput = new TextArea();
+
+        // SplitPane ------------
+        SplitPane splitPane = new SplitPane();
+        splitPane.setOrientation(Orientation.VERTICAL);
+        splitPane.getItems().addAll(textA, textOutput);
 
         // Clear button ------------
         //EventHandler<ActionEvent> eventHandler = actionEvent -> textA.clear();
@@ -317,7 +326,7 @@ public class App extends Application {
         HBox hBox = new HBox(clearB, colorPicker, menuFont, fontSizeField, searchBox);
         VBox vBox = new VBox(menuBar, hBox);
         bPane.setTop(vBox);
-        bPane.setCenter(textA);
+        bPane.setCenter(splitPane);
 
         // Scene ------------
         Scene scene = new Scene(bPane, 640, 480);
