@@ -1,5 +1,7 @@
 package com.company.util;
 
+import javafx.application.Platform;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,15 +10,24 @@ import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 public class JavaCompiler {
+    private static String path;
 
-    public static String compileAndRun(String file) {
-        String result = "";
-        String fileName = file.substring(file.lastIndexOf("\\") + 1);
-        String folderPath = file.replace(fileName, "");
+    public String getPath() {
+        return path;
+    }
 
-        fileName = fileName.replace(".java", "");
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public static void compileAndRun(CallbackCompile callback) {
+        //String result = "";
+        String fileName = path.substring(path.lastIndexOf("\\") + 1).replace(".java", "");
+        String folderPath = path.replace(fileName + ".java", "");
+
+        Thread t = new Thread(() -> {
         try {
-            String[] compile = {"javac", file};
+            String[] compile = {"javac", path};
             String[] run = {"java", "-cp", folderPath, fileName};
 
             // Compile
@@ -26,7 +37,8 @@ public class JavaCompiler {
                 System.out.print((char) fc);
                 String data = getOutput(compileProcess.getErrorStream());
                 System.out.println(data);
-                result += data;
+                //result += data;
+                Platform.runLater(() -> callback.received(data));
             }
 
             int value = compileProcess.waitFor();
@@ -39,18 +51,26 @@ public class JavaCompiler {
                     System.out.print((char) fcs);
                     String data = getOutput(runProcess.getErrorStream());
                     System.out.println(data);
-                    result += data;
+                    //result += data;
+                    Platform.runLater(() -> callback.received(data));
                 } else {
                     String data = getOutput(runProcess.getInputStream());
                     System.out.println(data);
-                    result += data;
+                    //result += data;
+                    Platform.runLater(() -> callback.received(data));
                 }
             }
         } catch (Exception e) {
             System.out.println(e);
-            result += e;
+            //result += e;
+            Platform.runLater(() -> callback.received(e.toString()));
         }
-        return result;
+        //return result;
+        });
+        t.start();
+    }
+    public interface CallbackCompile {
+        public void received(String content);
     }
     public static String getOutput(InputStream stream) throws IOException {
         String result = "";

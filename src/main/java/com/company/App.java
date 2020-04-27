@@ -25,18 +25,26 @@ import java.util.ResourceBundle;
 
 public class App extends Application {
 
+    // Stage for showPath;
+    Stage stageUp;
+    // Stage title
+    String title;
     //TextArea
     static TextArea textA;
     // String[] for setStyle ------------
     static String [] textCSS;
     static String [] fontCSS;
     static String [] sizeCSS;
+    // Run menu item
+    MenuItem compRunItem;
+    // Run button
+    Button compileRun;
 
     public App() {
         System.out.println("constructor");
     }
 
-    //CSS font set method
+    // CSS font set method
     public static EventHandler<ActionEvent> setFont(MenuItem font) {
 
         EventHandler<ActionEvent> eventHandler = actionEvent -> {
@@ -46,15 +54,20 @@ public class App extends Application {
         };
         return eventHandler;
     }
+    //
+    public void showPath(String path) {
+        stageUp.setTitle(title + "   " + path);
+    }
 
     @Override
     public void start(Stage stage) {
+        stageUp = stage;
         // Localization ------------
         // Locale locale = Locale.getDefault();
         Locale locale = new Locale("fi", "FI");
         ResourceBundle labels = ResourceBundle.getBundle("ui", locale);
         // Application title ------
-        String title = labels.getString("title");
+        title = labels.getString("title");
         //File menu names ------
         String fileString = labels.getString("fileString");
         String newItemString = labels.getString("newItemString");
@@ -110,7 +123,8 @@ public class App extends Application {
 
         // Compile and run button ------------
         //EventHandler<ActionEvent> eventHandler = actionEvent -> textA.clear();
-        Button compileRun = new Button("Run");
+        compileRun = new Button("Run");
+        compileRun.setDisable(true);
 
         // ColorPicker ------------
         ColorPicker colorPicker = new ColorPicker();
@@ -225,6 +239,10 @@ public class App extends Application {
             if(alert.getResult().getText().equals("OK")) {
                 saveItem.setDisable(true);
                 fileHandler.setFilePath(null);
+                //currentPath = fileHandler.getFilePath();
+                showPath("");
+                compRunItem.setDisable(true);
+                compileRun.setDisable(true);
                 textA.clear();
             }
         });
@@ -240,7 +258,12 @@ public class App extends Application {
                 //String content = fileHandler.open();
                 fileHandler.open((content -> {
                     textA.setText(content);
+                    //currentPath = fileHandler.getFilePath();
+                    //stage.setTitle(title + fileHandler.getFilePath());
+                    showPath(fileHandler.getFilePath());
                     saveItem.setDisable(false);
+                    compRunItem.setDisable(false);
+                    compileRun.setDisable(false);
                 }));
 
                 System.out.println(fileHandler.getFilePath());
@@ -256,7 +279,13 @@ public class App extends Application {
                 fileHandler.setFilePath(new FileChooser().showSaveDialog(stage).getPath());
                 String saveContent = textA.getText();
 
-                fileHandler.save((boolean b) -> saveItem.setDisable(b), saveContent);
+                fileHandler.save((boolean b) -> {
+                    saveItem.setDisable(b);
+                    //currentPath = fileHandler.getFilePath();
+                    showPath(fileHandler.getFilePath());
+                    compRunItem.setDisable(b);
+                    compileRun.setDisable(b);
+                }, saveContent);
                 //fileHandler.save(saveContent);
 
                 //saveItem.setDisable(false);
@@ -268,7 +297,13 @@ public class App extends Application {
         saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
         saveItem.setOnAction(actionEvent -> {
             try {
-                fileHandler.save((boolean b) -> saveItem.setDisable(b), textA.getText());
+                fileHandler.save((boolean b) -> {
+                    saveItem.setDisable(b);
+                    //currentPath = fileHandler.getFilePath();
+                    showPath(fileHandler.getFilePath());
+                    compRunItem.setDisable(b);
+                    compileRun.setDisable(b);
+                }, textA.getText());
             } catch(Exception e) {
                 System.out.println("Save error: " + e);
             }
@@ -279,8 +314,10 @@ public class App extends Application {
         // Run button action ------
         compileRun.setOnAction(actionEvent -> {
             JavaCompiler javaCompiler = new JavaCompiler();
-            String runResult = javaCompiler.compileAndRun(fileHandler.getFilePath());
-            textOutput.setText(runResult);
+            //String runResult = javaCompiler.compileAndRun(fileHandler.getFilePath());
+            javaCompiler.setPath(fileHandler.getFilePath());
+            javaCompiler.compileAndRun((content) -> textOutput.setText(content));
+
         });
 
         // Edit menu ------------
@@ -310,9 +347,17 @@ public class App extends Application {
 
         // Run menu ------------
         Menu run = new Menu(runString);
-        MenuItem compRunItem = new MenuItem(compRunItemString);
+        compRunItem = new MenuItem(compRunItemString);
         menuBar.getMenus().add(run);
         run.getItems().add(compRunItem);
+        compRunItem.setDisable(true);
+        // Run menu action ------------
+        compRunItem.setOnAction(actionEvent -> {
+            JavaCompiler javaCompiler = new JavaCompiler();
+            //String runResult = javaCompiler.compileAndRun(fileHandler.getFilePath());
+            javaCompiler.setPath(fileHandler.getFilePath());
+            javaCompiler.compileAndRun((content) -> textOutput.setText(content));
+        });
 
         // About menu ------------
         Menu about = new Menu(aboutString);
