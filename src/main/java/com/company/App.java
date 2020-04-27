@@ -1,6 +1,7 @@
 package com.company;
 
 import com.company.util.FileHandler;
+import com.company.util.JavaCompiler;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -107,10 +108,9 @@ public class App extends Application {
         splitPane.setOrientation(Orientation.VERTICAL);
         splitPane.getItems().addAll(textA, textOutput);
 
-        // Clear button ------------
+        // Compile and run button ------------
         //EventHandler<ActionEvent> eventHandler = actionEvent -> textA.clear();
-        Button clearB = new Button("clear");
-        clearB.setOnAction(actionEvent -> textA.clear());
+        Button compileRun = new Button("Run");
 
         // ColorPicker ------------
         ColorPicker colorPicker = new ColorPicker();
@@ -276,6 +276,14 @@ public class App extends Application {
         // Exit action ------
         exitItem.setOnAction(actionEvent -> System.exit(0));
 
+        // Run button action ------
+        compileRun.setOnAction(actionEvent -> {
+            JavaCompiler javaCompiler = new JavaCompiler();
+            String runResult = javaCompiler.compileAndRun(fileHandler.getFilePath());
+            textOutput.setText(runResult);
+            System.out.println(runResult);
+        });
+
         // Edit menu ------------
         Menu edit = new Menu(editString);
         MenuItem cutItem = new MenuItem(cutItemString);
@@ -323,7 +331,7 @@ public class App extends Application {
 
         // Layout ------------
         BorderPane bPane = new BorderPane();
-        HBox hBox = new HBox(clearB, colorPicker, menuFont, fontSizeField, searchBox);
+        HBox hBox = new HBox(compileRun, colorPicker, menuFont, fontSizeField, searchBox);
         VBox vBox = new VBox(menuBar, hBox);
         bPane.setTop(vBox);
         bPane.setCenter(splitPane);
