@@ -29,7 +29,7 @@ public class FileHandler {
         //String content = null;
         Thread t = new Thread(() -> {
         try {
-            Thread.sleep(10000);
+            Thread.sleep(5000);
             String content = Files.readString(Paths.get(filePath));
             Platform.runLater(() -> callback.received(content));
         } catch(IOException e) {
@@ -49,7 +49,7 @@ public class FileHandler {
     public void save(CallbackSave callback, String content) {
         Thread t = new Thread(() -> {
             try {
-                Thread.sleep(10000);
+                Thread.sleep(5000);
                 Files.writeString(Paths.get(filePath), content);
                 Platform.runLater(() -> callback.received(false));
             } catch(IOException e) {
