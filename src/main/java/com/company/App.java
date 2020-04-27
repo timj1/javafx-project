@@ -281,7 +281,6 @@ public class App extends Application {
             JavaCompiler javaCompiler = new JavaCompiler();
             String runResult = javaCompiler.compileAndRun(fileHandler.getFilePath());
             textOutput.setText(runResult);
-            System.out.println(runResult);
         });
 
         // Edit menu ------------
