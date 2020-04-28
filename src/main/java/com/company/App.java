@@ -100,6 +100,9 @@ public class App extends Application {
         String saveAsItemString = labels.getString("saveAsItemString");
         String saveItemString = labels.getString("saveItemString");
         String exitItemString = labels.getString("exitItemString");
+        // Exit alert ------
+        String exitAlertTitle = labels.getString("exitAlertTitle");
+        String exitAlertContent = labels.getString("exitAlertContent");
         // Edit menu names ------
         String editString = labels.getString("editString");
         String cutItemString = labels.getString("cutItemString");
@@ -338,9 +341,9 @@ public class App extends Application {
 
         // Alert exit confirmation -----
         Alert exitAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        exitAlert.setTitle("Exit confirmation");
+        exitAlert.setTitle(exitAlertTitle);
         exitAlert.setHeaderText(null);
-        exitAlert.setContentText("Are you sure you want to exit?");
+        exitAlert.setContentText(exitAlertContent);
 
         // CANCEL button listener ------
         final Button buttonOk = (Button) exitAlert.getDialogPane().lookupButton(ButtonType.CANCEL);
