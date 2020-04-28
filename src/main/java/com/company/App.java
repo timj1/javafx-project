@@ -2,6 +2,8 @@ package com.company;
 
 import com.company.util.FileHandler;
 import com.company.util.JavaCompiler;
+import com.company.util.PreferencesData;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -25,6 +27,7 @@ import java.util.ResourceBundle;
 
 public class App extends Application {
 
+    static PreferencesData data = new PreferencesData();
     // Stage for showPath;
     Stage stageUp;
     // Stage title
@@ -51,12 +54,31 @@ public class App extends Application {
             fontCSS[1] = font.getText() + ";";
             System.out.println(fontCSS[1]);
             textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
+            data.setFont(fontCSS[1]);
         };
         return eventHandler;
     }
     //
     public void showPath(String path) {
         stageUp.setTitle(title + "   " + path);
+    }
+
+    @Override
+    public void init() {
+
+        System.out.println(new File("./file.json").exists());
+        if(new File("./file.json").exists()) {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                data = objectMapper.readValue(new File("./file.json"), PreferencesData.class);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        } else {
+            data.setFont("Arial;");
+            data.setFontColor("blue;");
+            data.setFontSize("12 px;");
+        }
     }
 
     @Override
@@ -99,12 +121,13 @@ public class App extends Application {
         String searchAlertText = labels.getString("searchAlertText");
 
         // String[] for setStyle ------------
-        textCSS = new String[]{"-fx-text-fill:", "blue;"};
-        fontCSS = new String[]{"-fx-font-family:", "Arial;"};
-        sizeCSS = new String[]{"-fx-font-size:", "12 px;"};
+        textCSS = new String[]{"-fx-text-fill:", data.getFontColor()};
+        fontCSS = new String[]{"-fx-font-family:", data.getFont()};
+        sizeCSS = new String[]{"-fx-font-size:", data.getFontSize()};
 
         // TextArea ------------
         textA = new TextArea();
+        //textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
         textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
         textA.setOnKeyPressed(keyEvent -> {
             if(keyEvent.getCode() == KeyCode.TAB) {
@@ -128,13 +151,15 @@ public class App extends Application {
 
         // ColorPicker ------------
         ColorPicker colorPicker = new ColorPicker();
-        Color colorInit = Color.web(textCSS[1].replaceFirst(";", ""));
+        //Color colorInit = Color.web(textCSS[1].replaceFirst(";", ""));
+        Color colorInit = Color.web(data.getFontColor().replaceFirst(";", ""));
         colorPicker.setValue(colorInit);
 
         colorPicker.setOnAction(actionEvent -> {
             Color value = colorPicker.getValue();
             textCSS[1] = value.toString().replaceFirst("0x", "#")+";";
             textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
+            data.setFontColor(textCSS[1]);
             System.out.println(actionEvent.getTarget());
             System.out.println(actionEvent.getEventType());
             System.out.println(actionEvent.getSource());
@@ -157,6 +182,7 @@ public class App extends Application {
                 sizeCSS[1] = fontSizeField.getText() + " px;";
                 System.out.println(sizeCSS[1]);
                 textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
+                data.setFontSize(sizeCSS[1]);
             }
         });
 
@@ -389,6 +415,14 @@ public class App extends Application {
         stage.setScene(scene);
         stage.show();
 
+    }
+
+    @Override
+    public void stop() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.writeValue(new File("./file.json"), data);
+        } catch (Exception e) {}
     }
 
     public static void main(String args[]) {

@@ -1,4 +1,6 @@
 .DS_Store
+# JSON file
+*.json
 # Compiled class file
 *.class
 # Intellij IDEA

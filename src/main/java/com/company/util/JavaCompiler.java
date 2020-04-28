@@ -21,14 +21,15 @@ public class JavaCompiler {
     }
 
     public static void compileAndRun(CallbackCompile callback) {
-        //String result = "";
+        // Java file
         String fileName = path.substring(path.lastIndexOf("\\") + 1).replace(".java", "");
         String folderPath = path.replace(fileName + ".java", "");
 
+        String[] compile = {"javac", path};
+        String[] run = {"java", "-cp", folderPath, fileName};
+
         Thread t = new Thread(() -> {
         try {
-            String[] compile = {"javac", path};
-            String[] run = {"java", "-cp", folderPath, fileName};
 
             // Compile
             var compileProcess = Runtime.getRuntime().exec(compile);
