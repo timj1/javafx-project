@@ -23,6 +23,7 @@ import javafx.stage.StageStyle;
 
 import java.io.File;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class App extends Application {
@@ -334,8 +335,27 @@ public class App extends Application {
                 System.out.println("Save error: " + e);
             }
         });
+
+        // Alert exit confirmation -----
+        Alert exitAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        exitAlert.setTitle("Exit confirmation");
+        exitAlert.setHeaderText(null);
+        exitAlert.setContentText("Are you sure you want to exit?");
+
+        // CANCEL button listener ------
+        final Button buttonOk = (Button) exitAlert.getDialogPane().lookupButton(ButtonType.CANCEL);
+        buttonOk.addEventFilter(ActionEvent.ACTION, actionEvent -> System.out.println("Cancel was pressed"));
+
         // Exit action ------
-        exitItem.setOnAction(actionEvent -> System.exit(0));
+        exitItem.setOnAction(actionEvent -> {
+            Optional<ButtonType> result = exitAlert.showAndWait();
+            if (result.get() == ButtonType.OK){
+                System.out.println("OK button pressed");
+                System.exit(0);
+            } else {
+                System.out.println("CANCEL or close the dialog");
+            }
+        });
 
         // Run button action ------
         compileRun.setOnAction(actionEvent -> {
