@@ -4,12 +4,20 @@ import com.company.util.FileHandler;
 import com.company.util.JavaCompiler;
 import com.company.util.PreferencesData;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.animation.Animation;
+import javafx.animation.ParallelTransition;
+import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Glow;
+import javafx.scene.effect.InnerShadow;
+import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -20,6 +28,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.util.Locale;
@@ -27,7 +36,9 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class App extends Application {
-
+    // ScaleTransition
+    ScaleTransition scaleTransition;
+    // Preferences object
     static PreferencesData data = new PreferencesData();
     // Stage for showPath;
     Stage stageUp;
@@ -149,9 +160,9 @@ public class App extends Application {
         splitPane.getItems().addAll(textA, textOutput);
 
         // Compile and run button ------------
-        //EventHandler<ActionEvent> eventHandler = actionEvent -> textA.clear();
         compileRun = new Button("Run");
         compileRun.setDisable(true);
+        setEffect(compileRun);
 
         // ColorPicker ------------
         ColorPicker colorPicker = new ColorPicker();
@@ -362,6 +373,7 @@ public class App extends Application {
 
         // Run button action ------
         compileRun.setOnAction(actionEvent -> {
+            animate(actionEvent);
             JavaCompiler javaCompiler = new JavaCompiler();
             //String runResult = javaCompiler.compileAndRun(fileHandler.getFilePath());
             javaCompiler.setPath(fileHandler.getFilePath());
@@ -438,6 +450,39 @@ public class App extends Application {
         stage.setScene(scene);
         stage.show();
 
+    }
+
+    public void setEffect(Button button) {
+        InnerShadow innerShadow = new InnerShadow();
+        innerShadow.setOffsetX(1);
+        innerShadow.setOffsetY(0);
+        innerShadow.setRadius(10);
+        innerShadow.setColor(Color.web("gray"));
+        button.setEffect(innerShadow);
+    }
+
+    public void animate(ActionEvent actionEvent) {
+
+        /*RotateTransition rotateTransition = new RotateTransition();
+        rotateTransition.setDuration(Duration.millis(200));
+        rotateTransition.setByAngle(60);
+        rotateTransition.setAutoReverse(true);
+        rotateTransition.setCycleCount(2);
+        rotateTransition.setNode((Button) actionEvent.getSource());*/
+
+        if(scaleTransition == null || scaleTransition.getNode() != actionEvent.getSource()) {
+            scaleTransition = new ScaleTransition();
+            scaleTransition.setDuration(Duration.millis(100));
+            scaleTransition.setToX(1.2);
+            scaleTransition.setToY(1.2);
+            scaleTransition.setCycleCount(4);
+            scaleTransition.setAutoReverse(true);
+            scaleTransition.setNode((Button) actionEvent.getSource());
+        }
+        if(scaleTransition.getStatus() == Animation.Status.STOPPED){
+            scaleTransition.playFromStart();
+        }
+        //ParallelTransition parallel = new ParallelTransition(rotateTransition, scaleTransition);
     }
 
     @Override
