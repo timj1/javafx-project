@@ -52,11 +52,9 @@ public class App extends Application {
     static String [] sizeCSS;
     // Run menu item
     MenuItem compRunItem;
-    // Run button
-    Button compileRun;
 
     public App() {
-        System.out.println("constructor");
+        //System.out.println("constructor");
     }
 
     // CSS font set method
@@ -70,15 +68,15 @@ public class App extends Application {
         };
         return eventHandler;
     }
-    //
+
+    // Show filepath on stage title
     public void showPath(String path) {
         stageUp.setTitle(title + "   " + path);
     }
 
     @Override
     public void init() {
-
-        System.out.println(new File("./file.json").exists());
+        // Get json data if file exist
         if(new File("./file.json").exists()) {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -135,6 +133,10 @@ public class App extends Application {
         String searchAlertTitle = labels.getString("searchAlertTitle");
         String searchAlertText = labels.getString("searchAlertText");
 
+        // FileHandler object ------------
+        // For run, new, open, save as... and save
+        FileHandler fileHandler = new FileHandler();
+
         // String[] for setStyle ------------
         textCSS = new String[]{"-fx-text-fill:", data.getFontColor()};
         fontCSS = new String[]{"-fx-font-family:", data.getFont()};
@@ -142,7 +144,6 @@ public class App extends Application {
 
         // TextArea ------------
         textA = new TextArea();
-        //textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
         textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
         textA.setOnKeyPressed(keyEvent -> {
             if(keyEvent.getCode() == KeyCode.TAB) {
@@ -160,13 +161,21 @@ public class App extends Application {
         splitPane.getItems().addAll(textA, textOutput);
 
         // Compile and run button ------------
-        compileRun = new Button("Run");
+        Button compileRun = new Button("Run");
         compileRun.setDisable(true);
         setEffect(compileRun);
+        // Run button action ------
+        compileRun.setOnAction(actionEvent -> {
+            animate(actionEvent);
+            JavaCompiler javaCompiler = new JavaCompiler();
+            //String runResult = javaCompiler.compileAndRun(fileHandler.getFilePath());
+            javaCompiler.setPath(fileHandler.getFilePath());
+            javaCompiler.compileAndRun((content) -> textOutput.setText(content));
+
+        });
 
         // ColorPicker ------------
         ColorPicker colorPicker = new ColorPicker();
-        //Color colorInit = Color.web(textCSS[1].replaceFirst(";", ""));
         Color colorInit = Color.web(data.getFontColor().replaceFirst(";", ""));
         colorPicker.setValue(colorInit);
 
@@ -180,6 +189,19 @@ public class App extends Application {
             System.out.println(actionEvent.getSource());
 
         });
+
+        // Font MenuButton ------------
+        MenuItem sans_serifFont = new MenuItem("Arial");
+        MenuItem serifFont = new MenuItem("serif");
+        MenuItem cursiveFont = new MenuItem("cursive");
+        MenuItem monospaceFont = new MenuItem("monospace");
+        MenuButton menuFont = new MenuButton(fontsString, null,
+                sans_serifFont, serifFont, cursiveFont, monospaceFont);
+
+        sans_serifFont.setOnAction(setFont(sans_serifFont));
+        serifFont.setOnAction(setFont(serifFont));
+        cursiveFont.setOnAction(setFont(cursiveFont));
+        monospaceFont.setOnAction(setFont(monospaceFont));
 
         // Font size TextField ------------
         TextField fontSizeField = new TextField();
@@ -201,24 +223,10 @@ public class App extends Application {
             }
         });
 
-        // Font MenuButton ------------
-        MenuItem sans_serifFont = new MenuItem("Arial");
-        MenuItem serifFont = new MenuItem("serif");
-        MenuItem cursiveFont = new MenuItem("cursive");
-        MenuItem monospaceFont = new MenuItem("monospace");
-        MenuButton menuFont = new MenuButton(fontsString, null,
-                sans_serifFont, serifFont, cursiveFont, monospaceFont);
-
-        sans_serifFont.setOnAction(setFont(sans_serifFont));
-        serifFont.setOnAction(setFont(serifFont));
-        cursiveFont.setOnAction(setFont(cursiveFont));
-        monospaceFont.setOnAction(setFont(monospaceFont));
-
         // Search box ------------
         HBox searchBox = new HBox();
         // Search TextField ------
         TextField searchField = new TextField();
-        //fontSizeField.setPrefColumnCount(2);
         searchField.setPromptText(searchFieldString);
         searchField.setOnAction(actionEvent -> {
             int searchIndex = textA.getText().indexOf(searchField.getText());
@@ -266,8 +274,6 @@ public class App extends Application {
         menuBar.getMenus().add(file);
         file.getItems().addAll(newItem, openItem, saveAsItem, saveItem, exitItem);
 
-        // FileHandler for New, open, save as... and save ------------
-        FileHandler fileHandler = new FileHandler();
         // New file ------
         newItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
         newItem.setOnAction(actionEvent -> {
@@ -312,6 +318,7 @@ public class App extends Application {
                 System.out.println("Open error: " + e);
             }
         });
+
         // Save as... file ------
         saveAsItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHIFT_DOWN,
                 KeyCombination.SHORTCUT_DOWN));
@@ -334,6 +341,7 @@ public class App extends Application {
                 System.out.println("Save as... error: " + e);
             }
         });
+
         // Save file ------
         saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
         saveItem.setOnAction(actionEvent -> {
@@ -356,11 +364,11 @@ public class App extends Application {
         exitAlert.setHeaderText(null);
         exitAlert.setContentText(exitAlertContent);
 
-        // CANCEL button listener ------
+        // CANCEL button listener ---
         final Button buttonOk = (Button) exitAlert.getDialogPane().lookupButton(ButtonType.CANCEL);
         buttonOk.addEventFilter(ActionEvent.ACTION, actionEvent -> System.out.println("Cancel was pressed"));
 
-        // Exit action ------
+        // Exit action ---
         exitItem.setOnAction(actionEvent -> {
             Optional<ButtonType> result = exitAlert.showAndWait();
             if (result.get() == ButtonType.OK){
@@ -369,16 +377,6 @@ public class App extends Application {
             } else {
                 System.out.println("CANCEL or close the dialog");
             }
-        });
-
-        // Run button action ------
-        compileRun.setOnAction(actionEvent -> {
-            animate(actionEvent);
-            JavaCompiler javaCompiler = new JavaCompiler();
-            //String runResult = javaCompiler.compileAndRun(fileHandler.getFilePath());
-            javaCompiler.setPath(fileHandler.getFilePath());
-            javaCompiler.compileAndRun((content) -> textOutput.setText(content));
-
         });
 
         // Edit menu ------------
@@ -425,8 +423,7 @@ public class App extends Application {
         MenuItem aboutItem = new MenuItem(aboutItemString);
         menuBar.getMenus().add(about);
         about.getItems().add(aboutItem);
-
-        // Alert information ------------
+        // Alert about menu ------
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(alertTitle);
         alert.setHeaderText(null);
