@@ -476,7 +476,7 @@ public class App extends Application {
             scaleTransition.setDuration(Duration.millis(100));
             scaleTransition.setToX(1.2);
             scaleTransition.setToY(1.2);
-            scaleTransition.setCycleCount(4);
+            scaleTransition.setCycleCount(2);
             scaleTransition.setAutoReverse(true);
             scaleTransition.setNode((Button) actionEvent.getSource());
         }

@@ -26,17 +26,15 @@ public class FileHandler {
 
     // Opens the given file and returns the content, uses filePath
     public void open(CallbackOpen callback) {
-        //String content = null;
         Thread t = new Thread(() -> {
         try {
-            Thread.sleep(5000);
+            //Thread.sleep(5000);
             String content = Files.readString(Paths.get(filePath));
             Platform.runLater(() -> callback.received(content));
         } catch(IOException e) {
             System.out.println("problem with IO");
             e.printStackTrace();
         } catch (Exception e) {}
-        //return content;
         });
         t.start();
     }
@@ -49,7 +47,7 @@ public class FileHandler {
     public void save(CallbackSave callback, String content) {
         Thread t = new Thread(() -> {
             try {
-                Thread.sleep(5000);
+                //Thread.sleep(5000);
                 Files.writeString(Paths.get(filePath), content);
                 Platform.runLater(() -> callback.received(false));
             } catch(IOException e) {
