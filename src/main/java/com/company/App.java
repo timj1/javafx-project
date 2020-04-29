@@ -5,8 +5,6 @@ import com.company.util.JavaCompiler;
 import com.company.util.PreferencesData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.Animation;
-import javafx.animation.ParallelTransition;
-import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -14,17 +12,14 @@ import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Glow;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -154,11 +149,18 @@ public class App extends Application {
 
         // TextArea Output ------------
         TextArea textOutput = new TextArea();
+        textOutput.setEditable(false);
+        textOutput.setStyle("-fx-text-fill: blue; -fx-control-inner-background:lightgrey;");
+
+        // BorderPane ------------
+        BorderPane outputPane = new BorderPane();
+        outputPane.setTop(new Label("Output"));
+        outputPane.setCenter(textOutput);
 
         // SplitPane ------------
         SplitPane splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.VERTICAL);
-        splitPane.getItems().addAll(textA, textOutput);
+        splitPane.getItems().addAll(textA, outputPane);
 
         // Compile and run button ------------
         Button compileRun = new Button("Run");
@@ -300,22 +302,24 @@ public class App extends Application {
         openItem.setOnAction(actionEvent -> {
             System.out.println(fileHandler.getFilePath());
             File openFile = fileChooser.showOpenDialog(stage);
-            try {
-                fileHandler.setFilePath(openFile.getPath());
-                //String content = fileHandler.open();
-                fileHandler.open((content -> {
-                    textA.setText(content);
-                    //currentPath = fileHandler.getFilePath();
-                    //stage.setTitle(title + fileHandler.getFilePath());
-                    showPath(fileHandler.getFilePath());
-                    saveItem.setDisable(false);
-                    compRunItem.setDisable(false);
-                    compileRun.setDisable(false);
-                }));
+            System.out.println(openFile);
+            if(openFile != null) {
+                try {
+                    fileHandler.setFilePath(openFile.getPath());
+                    //String content = fileHandler.open();
+                    fileHandler.open((content -> {
+                        textA.setText(content);
+                        //Path to title
+                        showPath(fileHandler.getFilePath());
+                        saveItem.setDisable(false);
+                        compRunItem.setDisable(false);
+                        compileRun.setDisable(false);
+                    }));
 
-                System.out.println(fileHandler.getFilePath());
-            } catch (Exception e) {
-                System.out.println("Open error: " + e);
+                    System.out.println(fileHandler.getFilePath());
+                } catch (Exception e) {
+                    System.out.println("Open error: " + e);
+                }
             }
         });
 
