@@ -21,54 +21,112 @@ public class JavaCompiler {
     }
 
     public static void compileAndRun(CallbackCompile callback) {
-        // Java file
-        String fileName = path.substring(path.lastIndexOf("\\") + 1).replace(".java", "");
-        String folderPath = path.replace(fileName + ".java", "");
 
-        String[] compile = {"javac", path};
-        String[] run = {"java", "-cp", folderPath, fileName};
+        // Node.js file
+        if(path.substring(path.lastIndexOf(".")).equals(".js")) {
 
-        Thread t = new Thread(() -> {
-        try {
+            String[] run = {"node", path};
 
-            // Compile
-            var compileProcess = Runtime.getRuntime().exec(compile);
-            int fc = compileProcess.getErrorStream().read();
-            if( fc != -1 ) {
-                System.out.print((char) fc);
-                String data = getOutput(compileProcess.getErrorStream());
-                System.out.println(data);
-                //result += data;
-                Platform.runLater(() -> callback.received(data));
-            }
-
-            int value = compileProcess.waitFor();
-
-            // Run
-            if(value == 0) {
-                var runProcess = Runtime.getRuntime().exec(run);
-                int fcs = compileProcess.getErrorStream().read();
-                if(fcs != -1) {
-                    System.out.print((char) fcs);
-                    String data = getOutput(runProcess.getErrorStream());
-                    System.out.println(data);
-                    //result += data;
-                    Platform.runLater(() -> callback.received(data));
-                } else {
-                    String data = getOutput(runProcess.getInputStream());
-                    System.out.println(data);
-                    //result += data;
-                    Platform.runLater(() -> callback.received(data));
+            Thread t = new Thread(() -> {
+                try {
+                    var runProcess = Runtime.getRuntime().exec(run);
+                    int fcs = runProcess.getErrorStream().read();
+                    if (fcs != -1) {
+                        System.out.print((char) fcs);
+                        String data = getOutput(runProcess.getErrorStream());
+                        System.out.println(data);
+                        Platform.runLater(() -> callback.received(data));
+                    } else {
+                        String data = getOutput(runProcess.getInputStream());
+                        System.out.println(data);
+                        Platform.runLater(() -> callback.received(data));
+                    }
+                } catch (Exception e) {
+                    System.out.println(e);
+                    Platform.runLater(() -> callback.received(e.toString()));
                 }
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            //result += e;
-            Platform.runLater(() -> callback.received(e.toString()));
+            });
+            t.start();
         }
-        //return result;
-        });
-        t.start();
+
+        // Python file
+        if(path.substring(path.lastIndexOf(".")).equals(".py")) {
+
+            String[] run = {"python", path};
+
+            Thread t = new Thread(() -> {
+                try {
+                    var runProcess = Runtime.getRuntime().exec(run);
+                    int fcs = runProcess.getErrorStream().read();
+                    if (fcs != -1) {
+                        System.out.print((char) fcs);
+                        String data = getOutput(runProcess.getErrorStream());
+                        System.out.println(data);
+                        Platform.runLater(() -> callback.received(data));
+                    } else {
+                        String data = getOutput(runProcess.getInputStream());
+                        System.out.println(data);
+                        Platform.runLater(() -> callback.received(data));
+                    }
+                } catch (Exception e) {
+                    System.out.println(e);
+                    Platform.runLater(() -> callback.received(e.toString()));
+                }
+            });
+            t.start();
+        }
+
+        // Java file
+        if(path.substring(path.lastIndexOf(".")).equals(".java")) {
+
+            String fileName = path.substring(path.lastIndexOf("\\") + 1).replace(".java", "");
+            String folderPath = path.replace(fileName + ".java", "");
+
+            String[] compile = {"javac", path};
+            String[] run = {"java", "-cp", folderPath, fileName};
+
+            Thread t = new Thread(() -> {
+                try {
+
+                    // Compile
+                    var compileProcess = Runtime.getRuntime().exec(compile);
+                    int fc = compileProcess.getErrorStream().read();
+                    if (fc != -1) {
+                        System.out.print((char) fc);
+                        String data = getOutput(compileProcess.getErrorStream());
+                        System.out.println(data);
+                        //result += data;
+                        Platform.runLater(() -> callback.received(data));
+                    }
+
+                    int value = compileProcess.waitFor();
+
+                    // Run
+                    if (value == 0) {
+                        var runProcess = Runtime.getRuntime().exec(run);
+                        int fcs = runProcess.getErrorStream().read();
+                        if (fcs != -1) {
+                            System.out.print((char) fcs);
+                            String data = getOutput(runProcess.getErrorStream());
+                            System.out.println(data);
+                            //result += data;
+                            Platform.runLater(() -> callback.received(data));
+                        } else {
+                            String data = getOutput(runProcess.getInputStream());
+                            System.out.println(data);
+                            //result += data;
+                            Platform.runLater(() -> callback.received(data));
+                        }
+                    }
+                } catch (Exception e) {
+                    System.out.println(e);
+                    //result += e;
+                    Platform.runLater(() -> callback.received(e.toString()));
+                }
+                //return result;
+            });
+            t.start();
+        }
     }
     public interface CallbackCompile {
         public void received(String content);
