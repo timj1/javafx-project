@@ -5,7 +5,7 @@ JavaFX project to make code editor. Project started in java programming course.
 Learn java and hopefully code kind of usable application.
 
 ## Screenshots
-![](images/JavaFX code editor.png?raw "Code editor")
+![](images/JavaFX-code-editor.png?raw "Code editor")
 
 ## Tech/framework used
 - Maven
