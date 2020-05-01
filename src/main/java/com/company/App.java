@@ -10,7 +10,11 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.effect.Reflection;
@@ -20,6 +24,8 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -146,29 +152,37 @@ public class App extends Application {
                 textA.replaceText(index-1, index, "    ");
             }
         });
-
         // TextArea Output ------------
         TextArea textOutput = new TextArea();
         textOutput.setEditable(false);
         textOutput.setStyle("-fx-text-fill: blue; -fx-control-inner-background:lightgrey;");
-
         // BorderPane ------------
         BorderPane outputPane = new BorderPane();
         outputPane.setTop(new Label("Output"));
         outputPane.setCenter(textOutput);
-
         // SplitPane ------------
         SplitPane splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.VERTICAL);
         splitPane.getItems().addAll(textA, outputPane);
 
         // Compile and run button ------------
-        Button compileRun = new Button("Run");
+        Button compileRun = new Button();
+        compileRun.setMinWidth(30);
         compileRun.setDisable(true);
         setEffect(compileRun);
+        // Polygon triangle ------------
+        Polygon polygon = new Polygon();
+        polygon.getPoints().addAll(0.0, 0.0,
+                10.0, 5.0,
+                0.0, 10.0);
+        polygon.setDisable(true);
+        polygon.setFill(Color.GRAY);
+        // StackPane ------------
+        StackPane stackPane = new StackPane(compileRun, polygon);
+
         // Run button action ------
         compileRun.setOnAction(actionEvent -> {
-            animate(actionEvent);
+            animate(stackPane);
             JavaCompiler javaCompiler = new JavaCompiler();
             //String runResult = javaCompiler.compileAndRun(fileHandler.getFilePath());
             javaCompiler.setPath(fileHandler.getFilePath());
@@ -292,6 +306,7 @@ public class App extends Application {
                 showPath("");
                 compRunItem.setDisable(true);
                 compileRun.setDisable(true);
+                polygon.setFill(Color.GRAY);
                 textA.clear();
             }
         });
@@ -314,6 +329,7 @@ public class App extends Application {
                         saveItem.setDisable(false);
                         compRunItem.setDisable(false);
                         compileRun.setDisable(false);
+                        polygon.setFill(Color.LIMEGREEN);
                     }));
 
                     System.out.println(fileHandler.getFilePath());
@@ -337,6 +353,7 @@ public class App extends Application {
                     showPath(fileHandler.getFilePath());
                     compRunItem.setDisable(b);
                     compileRun.setDisable(b);
+                    polygon.setFill(Color.LIMEGREEN);
                 }, saveContent);
                 //fileHandler.save(saveContent);
 
@@ -356,6 +373,7 @@ public class App extends Application {
                     showPath(fileHandler.getFilePath());
                     compRunItem.setDisable(b);
                     compileRun.setDisable(b);
+                    polygon.setFill(Color.LIMEGREEN);
                 }, textA.getText());
             } catch(Exception e) {
                 System.out.println("Save error: " + e);
@@ -437,7 +455,8 @@ public class App extends Application {
 
         // Layout ------------
         BorderPane bPane = new BorderPane();
-        HBox hBox = new HBox(compileRun, colorPicker, menuFont, fontSizeField, searchBox);
+        HBox hBox = new HBox(stackPane, colorPicker, menuFont, fontSizeField, searchBox);
+        //ToolBar toolBar = new ToolBar(runButtonGroup, colorPicker, menuFont, fontSizeField, searchBox);
         VBox vBox = new VBox(menuBar, hBox);
         bPane.setTop(vBox);
         bPane.setCenter(splitPane);
@@ -453,6 +472,20 @@ public class App extends Application {
 
     }
 
+    private void drawShapes(GraphicsContext gc) {
+        gc.setFill(Color.GREEN);
+        gc.setStroke(Color.BLUE);
+        gc.setLineWidth(5);
+        gc.strokeLine(20, 0, 0, 20);
+
+        gc.fillPolygon(new double[]{10, 40, 10, 40},
+                new double[]{210, 210, 240, 240}, 4);
+        /*gc.strokePolygon(new double[]{60, 90, 60, 90},
+                new double[]{210, 210, 240, 240}, 4);
+        gc.strokePolyline(new double[]{110, 140, 110, 140},
+                new double[]{210, 210, 240, 240}, 4);*/
+    }
+
     public void setEffect(Button button) {
         InnerShadow innerShadow = new InnerShadow();
         innerShadow.setOffsetX(1);
@@ -462,7 +495,7 @@ public class App extends Application {
         button.setEffect(innerShadow);
     }
 
-    public void animate(ActionEvent actionEvent) {
+    public void animate(Node node) {
 
         /*RotateTransition rotateTransition = new RotateTransition();
         rotateTransition.setDuration(Duration.millis(200));
@@ -471,14 +504,14 @@ public class App extends Application {
         rotateTransition.setCycleCount(2);
         rotateTransition.setNode((Button) actionEvent.getSource());*/
 
-        if(scaleTransition == null || scaleTransition.getNode() != actionEvent.getSource()) {
+        if(scaleTransition == null || scaleTransition.getNode() != node) {
             scaleTransition = new ScaleTransition();
             scaleTransition.setDuration(Duration.millis(100));
             scaleTransition.setToX(1.2);
             scaleTransition.setToY(1.2);
             scaleTransition.setCycleCount(2);
             scaleTransition.setAutoReverse(true);
-            scaleTransition.setNode((Button) actionEvent.getSource());
+            scaleTransition.setNode(node);
         }
         if(scaleTransition.getStatus() == Animation.Status.STOPPED){
             scaleTransition.playFromStart();
