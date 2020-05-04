@@ -53,7 +53,7 @@ public class App extends Application {
     static String [] textCSS;
     static String [] fontCSS;
     static String [] sizeCSS;
-    // MenuButton
+    // Font MenuButton
     static MenuButton menuFont;
     // Run menu item
     MenuItem compRunItem;
