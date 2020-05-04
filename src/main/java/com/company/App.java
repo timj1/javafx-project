@@ -26,12 +26,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -51,6 +53,8 @@ public class App extends Application {
     static String [] textCSS;
     static String [] fontCSS;
     static String [] sizeCSS;
+    // MenuButton
+    static MenuButton menuFont;
     // Run menu item
     MenuItem compRunItem;
 
@@ -66,6 +70,7 @@ public class App extends Application {
             System.out.println(fontCSS[1]);
             textA.setStyle(textCSS[0] + textCSS[1] + fontCSS[0] + fontCSS[1] + sizeCSS[0] + sizeCSS[1]);
             data.setFont(fontCSS[1]);
+            menuFont.setText(font.getText());
         };
         return eventHandler;
     }
@@ -182,7 +187,7 @@ public class App extends Application {
 
         // Run button action ------
         compileRun.setOnAction(actionEvent -> {
-            animate(stackPane);
+            animate(polygon);
             JavaCompiler javaCompiler = new JavaCompiler();
             //String runResult = javaCompiler.compileAndRun(fileHandler.getFilePath());
             javaCompiler.setPath(fileHandler.getFilePath());
@@ -207,17 +212,13 @@ public class App extends Application {
         });
 
         // Font MenuButton ------------
-        MenuItem sans_serifFont = new MenuItem("Arial");
-        MenuItem serifFont = new MenuItem("serif");
-        MenuItem cursiveFont = new MenuItem("cursive");
-        MenuItem monospaceFont = new MenuItem("monospace");
-        MenuButton menuFont = new MenuButton(fontsString, null,
-                sans_serifFont, serifFont, cursiveFont, monospaceFont);
-
-        sans_serifFont.setOnAction(setFont(sans_serifFont));
-        serifFont.setOnAction(setFont(serifFont));
-        cursiveFont.setOnAction(setFont(cursiveFont));
-        monospaceFont.setOnAction(setFont(monospaceFont));
+        menuFont = new MenuButton(fontCSS[1].replace(";",""), null);
+        List<String> fontList = Font.getFamilies();
+        for(String s: fontList) {
+            MenuItem menuItem = new MenuItem(s);
+            menuItem.setOnAction(setFont(menuItem));
+            menuFont.getItems().add(menuItem);
+        }
 
         // Font size TextField ------------
         TextField fontSizeField = new TextField();
